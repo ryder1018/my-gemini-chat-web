@@ -1,110 +1,133 @@
-# My ChatGPT Web (Gemini Edition)
+# My Gemini Chat Web
 
-這是一個使用你自己的 Gemini API key 的聊天網頁，前端透過後端 API 轉發請求到 Gemini 模型，避免在瀏覽器暴露金鑰。
+一個可直接對外展示的個人 AI 聊天網站。  
+它包含「啟動導覽頁 + 聊天頁」兩段式體驗，並用後端安全串接 Gemini API。
 
-## 功能
+## 專案特色
 
-- 聊天介面（類 ChatGPT）
-- 後端呼叫 Gemini API（`@google/genai`）
-- 支援自訂 `model`
-- 支援自訂 `system prompt`
-- `Prompt DNA Console`：用滑桿調整嚴謹度/創造度/同理度/精簡度，按「確定 DNA」套用回覆風格
-- 保留本次對話歷史（前端記憶，送到後端）
-- 一鍵清除對話
-- `Conversation Time Capsule`：可將目前對話存成快照、後續一鍵載入與刪除
-- 基本錯誤處理
+- 沉浸式啟動頁（scroll 動畫、動態數據、轉場進入聊天）
+- ChatGPT 風格聊天介面
+- 可自訂 `Model` 與 `System Prompt`
+- `Prompt DNA Console`（滑桿調整回覆風格）
+- `Conversation Time Capsule`（對話快照儲存/載入/刪除）
+- API Key 僅在後端使用，不暴露在前端
 
-## 專案結構
+## 使用技術
 
-```text
-hw1/
-├─ public/
-│  ├─ index.html      # 前端 UI
-│  └─ app.js          # 前端聊天邏輯
-├─ server.js          # Express 後端 + Gemini API 呼叫
-├─ .env               # 你的 API key
-├─ package.json
-└─ README.md
-```
+- Frontend: HTML / CSS / Vanilla JavaScript
+- Backend: Node.js + Express
+- LLM SDK: `@google/genai`
+- Env 管理: `dotenv`
 
-## 使用方式
+## 快速開始（給第一次執行的人）
 
-### 1. 安裝套件
+### 1. 安裝需求
+
+- Node.js `18+`（建議 `20+`）
+- npm
+
+### 2. 安裝套件
 
 ```bash
 npm install
 ```
 
-### 2. 確認 `.env`
+### 3. 建立環境變數
 
-此專案支援以下任一變數名稱：
+在專案根目錄建立 `.env`，填入任一種 key 名稱：
 
 ```env
-GEMINI_API_KEY=your_api_key
+GEMINI_API_KEY=your_gemini_api_key
 # 或
-GOOGLE_API_KEY=your_api_key
+GOOGLE_API_KEY=your_gemini_api_key
 ```
 
-### 3. 啟動伺服器
+### 4. 啟動專案
 
 ```bash
 npm run start
 ```
 
-成功後打開：
+開啟瀏覽器：
 
 - `http://localhost:3000`
 
-### 4. 開始聊天
+## 介面操作說明
 
-- 左側可設定 `Model`（預設 `gemini-2.5-flash`）
-- 左側可設定 `System Prompt`
-- 左側 `Prompt DNA Console` 調完滑桿後按 `確定 DNA`，會有套用特效並更新回覆風格
-- 左側 `Conversation Time Capsule` 可儲存/載入對話快照
-- 右側輸入訊息後按送出
-- `Enter` 送出，`Shift + Enter` 換行
+1. 先在啟動頁向下滾動，或按 `Skip Intro`。
+2. 按 `Enter Chat` 進入聊天介面。
+3. 左側可展開設定欄，調整 `Model`、`System Prompt` 與 `Prompt DNA`。
+4. 右側輸入訊息後送出：
+- `Enter`: 送出
+- `Shift + Enter`: 換行
+5. 可用 `Conversation Time Capsule` 儲存與恢復對話快照。
 
-## API 路由
+## API 介面
 
-- `POST /api/chat`
-  - request:
-    - `message: string`
-    - `history: Array<{ role: "user" | "assistant", content: string }>`
-    - `model?: string`
-    - `systemPrompt?: string`
-  - response:
-    - `reply: string`
-    - `model: string`
+### `POST /api/chat`
 
-- `GET /api/health`
-  - 回傳服務狀態
+Request body:
 
-## 後端實作重點
+```json
+{
+  "message": "Hello",
+  "history": [
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
+  ],
+  "model": "gemini-2.5-flash",
+  "systemPrompt": "You are a helpful assistant."
+}
+```
 
-- 從 `.env` 讀取 Gemini key（`GEMINI_API_KEY` / `GOOGLE_API_KEY`）
-- 將前端歷史紀錄轉成 Gemini `contents` 格式：
-  - `user` -> `user`
-  - `assistant` -> `model`
-- 使用 `config.systemInstruction` 套用 system prompt
-- 用 `ai.models.generateContent(...)` 取得回覆
+Response:
 
-## 為什麼要後端轉發
+```json
+{
+  "reply": "......",
+  "model": "gemini-2.5-flash"
+}
+```
 
-因為 API key 不能放在前端程式碼。若直接在瀏覽器呼叫 Gemini API，key 會被任何人看到並濫用。
+### `GET /api/health`
 
-## 這次完成的實作紀錄
+用於檢查後端是否正常運行，成功時回傳：
 
-1. 建立聊天網站的前後端架構（Express + 原生前端）。
-2. 完成聊天 UI、對話歷史、送出/清除、錯誤提示。
-3. 將 OpenAI 版本遷移為 Gemini 版本：
-   - 將 SDK 改為 `@google/genai`
-   - 後端改用 Gemini `generateContent`
-   - `.env` 改讀 `GEMINI_API_KEY` / `GOOGLE_API_KEY`
-   - 預設模型改為 `gemini-2.5-flash`
-4. 更新 README，記錄安裝、設定與遷移內容。
+```json
+{ "ok": true }
+```
 
-## 參考文件
+## 專案結構
 
-- Gemini API (Google AI for Developers): https://ai.google.dev/gemini-api/docs
-- Google Gen AI SDK (JS): https://github.com/googleapis/js-genai
-- API Key Safety（伺服器端保護金鑰）: https://ai.google.dev/gemini-api/docs/api-key
+```text
+.
+├─ public/
+│  ├─ index.html      # 前端畫面與樣式
+│  └─ app.js          # 前端互動邏輯
+├─ server.js          # Express API + Gemini 呼叫
+├─ .env               # 本機環境變數（不提交）
+├─ package.json
+└─ README.md
+```
+
+## 安全說明
+
+- `.env` 已被 `.gitignore` 排除，不會被提交。
+- 前端不直接呼叫 Gemini API，改由後端轉發，避免金鑰外洩。
+
+## 常見問題
+
+### Q1: 啟動後沒有回覆？
+
+- 確認 `.env` key 是否正確。
+- 檢查 API key 是否有可用額度。
+- 檢查後端 log 是否出現 4xx/5xx。
+
+### Q2: Port 3000 被占用？
+
+- 先關掉其他使用 `3000` 的程式，再重新執行 `npm run start`。
+
+## 參考資源
+
+- Gemini API Docs: https://ai.google.dev/gemini-api/docs
+- JS GenAI SDK: https://github.com/googleapis/js-genai

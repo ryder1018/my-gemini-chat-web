@@ -377,6 +377,66 @@ function buildContents(history, userMessage, imageData) {
   return contents;
 }
 
+function buildToolSettings(message, options = {}) {
+  const { forceSpecificTool = true } = options;
+  const text = String(message || "").trim().toLowerCase();
+  const hasMathPattern =
+    /[\d)\]]\s*[-+*/%^]\s*[\d(\[]/.test(text) ||
+    /\b(math|calculate|calculation|equation)\b/.test(text) ||
+    /幫我算|計算|多少/.test(text);
+  const wantsTime =
+    /\b(time|date|day|timezone|clock|local time|current time)\b/.test(text) ||
+    /現在幾點|幾點了|現在時間|目前時間|日期|今天幾號|星期幾|時區|電腦時間/.test(text);
+  const wantsSaveMemory =
+    /\bremember this|save this|memorize\b/.test(text) ||
+    /記住這個|記住這件事|幫我記住|記下來/.test(text);
+  const wantsRecallMemory =
+    /\bdo you remember|recall|what do you know about\b/.test(text) ||
+    /你記得|回想|回憶|我之前說/.test(text);
+  const wantsWebSearch =
+    /\b(search|look up|latest|news|current events)\b/.test(text) ||
+    /搜尋|查一下|最新|新聞|近況/.test(text);
+
+  let allowedFunctionNames = null;
+
+  if (forceSpecificTool && wantsTime) {
+    allowedFunctionNames = ["get_current_datetime"];
+  } else if (forceSpecificTool && hasMathPattern) {
+    allowedFunctionNames = ["calculate"];
+  } else if (forceSpecificTool && wantsSaveMemory) {
+    allowedFunctionNames = ["save_memory"];
+  } else if (forceSpecificTool && wantsRecallMemory) {
+    allowedFunctionNames = ["recall_memories"];
+  } else if (forceSpecificTool && wantsWebSearch) {
+    allowedFunctionNames = ["web_search"];
+  }
+
+  return {
+    tools: [{ functionDeclarations: toolDeclarations }],
+    toolConfig: {
+      functionCallingConfig: allowedFunctionNames
+        ? {
+            mode: "ANY",
+            allowedFunctionNames,
+          }
+        : {
+            mode: "AUTO",
+          },
+    },
+  };
+}
+
+function attachToolSettings(target, message, enableTools, options = {}) {
+  if (enableTools === false) return;
+
+  const toolSettings = buildToolSettings(message, options);
+  target.config = {
+    ...(target.config || {}),
+    tools: toolSettings.tools,
+    toolConfig: toolSettings.toolConfig,
+  };
+}
+
 function extractAssistantText(response) {
   if (
     response &&
@@ -621,9 +681,7 @@ app.post("/api/chat", async (req, res) => {
   }
 
   const toolsUsed = [];
-  if (enableTools !== false) {
-    payload.tools = [{ functionDeclarations: toolDeclarations }];
-  }
+  attachToolSettings(payload, message, enableTools, { forceSpecificTool: true });
 
   try {
     const startTime = Date.now();
@@ -659,9 +717,7 @@ app.post("/api/chat", async (req, res) => {
       if (fullSystemPrompt) {
         followUp.config = { systemInstruction: fullSystemPrompt };
       }
-      if (enableTools !== false) {
-        followUp.tools = [{ functionDeclarations: toolDeclarations }];
-      }
+      attachToolSettings(followUp, message, enableTools, { forceSpecificTool: false });
 
       generation = await generateContentWithFallback(followUp, actualModel);
       response = generation.response;

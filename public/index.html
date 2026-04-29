@@ -1334,6 +1334,7 @@
         word-break: break-word;
         position: relative;
         overflow: visible;
+        flex: 0 0 auto;
       }
 
       .message.user {
@@ -1357,6 +1358,11 @@
         backdrop-filter: blur(10px);
         animation: summaryCardIn 720ms cubic-bezier(0.18, 0.88, 0.24, 1);
         overflow: hidden;
+      }
+
+      .message.summary-message > * {
+        position: relative;
+        z-index: 1;
       }
 
       .message.summary-message::before,

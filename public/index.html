@@ -552,6 +552,9 @@
         pointer-events: none;
         transition: opacity 220ms ease, transform 280ms ease;
         scrollbar-width: thin;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-gutter: stable;
       }
 
       .chat-control-body > * {
@@ -1144,6 +1147,8 @@
         display: grid;
         grid-template-rows: auto 1fr auto;
         min-height: 0;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .chat-head {
@@ -1315,6 +1320,9 @@
         flex-direction: column;
         gap: 10px;
         padding: 14px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-gutter: stable;
       }
 
       .message {
@@ -1325,7 +1333,7 @@
         line-height: 1.6;
         word-break: break-word;
         position: relative;
-        overflow: hidden;
+        overflow: visible;
       }
 
       .message.user {
@@ -1348,6 +1356,7 @@
           0 14px 34px rgba(0, 0, 0, 0.24);
         backdrop-filter: blur(10px);
         animation: summaryCardIn 720ms cubic-bezier(0.18, 0.88, 0.24, 1);
+        overflow: hidden;
       }
 
       .message.summary-message::before,
@@ -1735,6 +1744,17 @@
       body.mode-chat .scan-noise {
         opacity: 0;
         pointer-events: none;
+      }
+
+      body.mode-chat {
+        height: 100svh;
+        overflow: hidden;
+      }
+
+      body.mode-chat .experience {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
       }
 
       body.mode-chat .chat-shell {

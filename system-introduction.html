@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Introduction - My Gemini Chat Web v2</title>
+    <style>
+      :root {
+        --ink: #111827;
+        --muted: #4b5563;
+        --line: #d1d5db;
+        --panel: #f8fafc;
+        --cyan: #0891b2;
+        --teal: #0f766e;
+        --violet: #4338ca;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #e5e7eb;
+        color: var(--ink);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        padding: 24px;
+      }
+
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 10px 32px rgba(15, 23, 42, 0.14);
+        padding: 14mm;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.3fr 0.95fr;
+        gap: 16px;
+        align-items: start;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--cyan);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12.4px;
+        line-height: 1.5;
+      }
+
+      .summary-box {
+        border: 1px solid var(--line);
+        background: linear-gradient(145deg, #f8fdff, #f8fafc);
+        border-radius: 14px;
+        padding: 14px 14px 12px;
+      }
+
+      .summary-box h2 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: var(--violet);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .summary-box ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 12.5px;
+        line-height: 1.55;
+      }
+
+      .content {
+        margin-top: 12px;
+      }
+
+      .article {
+        column-count: 2;
+        column-gap: 18px;
+        column-fill: balance;
+      }
+
+      section {
+        margin-bottom: 10px;
+        break-inside: avoid;
+      }
+
+      section:last-child {
+        margin-bottom: 0;
+      }
+
+      h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        color: var(--teal);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      p {
+        margin: 0;
+        font-size: 11.2px;
+        line-height: 1.5;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 9px 10px;
+      }
+
+      .api-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 11px;
+        line-height: 1.55;
+      }
+
+      .body-copy p + p {
+        margin-top: 7px;
+      }
+
+      .footer {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      code {
+        font-family: "Consolas", "Courier New", monospace;
+        font-size: 0.94em;
+        background: #eef2ff;
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+
+        .page {
+          width: auto;
+          min-height: auto;
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">System Introduction</p>
+          <h1>My Gemini Chat Web v2</h1>
+          <p class="subtitle">
+            112550044 - 吳宇藤
+          </p>
+        </div>
+
+        <aside class="summary-box">
+          <h2>Upgrade Summary</h2>
+          <ul>
+            <li>Long-term memory</li>
+            <li>Multimodal image input</li>
+            <li>Auto routing between models</li>
+            <li>Tool use via function calling</li>
+            <li>One-click conversation summary</li>
+          </ul>
+        </aside>
+      </header>
+
+      <div class="content article body-copy">
+        <section class="card">
+          <h3>Overview</h3>
+          <p>
+            My Gemini Chat Web v2 is an upgraded AI assistant platform based on
+            Homework 01. In the original version, the system mainly supported
+            plain text conversation with the Gemini API. In v2, the project has
+            been extended into a feature-complete chatbot system with
+            long-term memory, multimodal image input, automatic model routing,
+            tool use, and several practical interaction features. The goal of
+            this upgrade is to make the chatbot capable of answering questions,
+            remembering important user information, processing images, choosing
+            suitable models automatically, and performing simple actions through
+            tool calling.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Long-term Memory</h3>
+          <p>
+            The first major improvement is Long-term Memory. In the original
+            chatbot, the model forgot everything after the conversation ended.
+            In v2, a memory system is implemented on the server side using
+            <code>data/memories.json</code>. Three APIs are added for memory
+            management: <code>GET /api/memories</code>,
+            <code>POST /api/memories</code>, and
+            <code>DELETE /api/memories/:id</code>. The AI can automatically save
+            important user information through tool calling, such as language
+            preference or personal settings, and all saved memories are injected
+            into the system prompt in later conversations so that the chatbot
+            can maintain persistent context. In addition, the frontend provides
+            a memory panel where users can manually add or delete memories.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Multimodal Support</h3>
+          <p>
+            The second improvement is Multimodal Support. The original system
+            only accepted text input, while v2 allows users to interact with
+            both text and images. Three image input methods are supported:
+            clicking the upload button, dragging and dropping an image into the
+            chat area, and pasting an image directly from the clipboard. The
+            frontend converts the selected image into Base64 and sends it to the
+            backend in JSON format. On the server side, the image is passed to
+            Gemini together with the text prompt using <code>inlineData</code>.
+            To support image input, the request size limit is increased from 1MB
+            to 12MB. The chat interface also shows an image preview before
+            sending the message.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Auto Routing</h3>
+          <p>
+            The third improvement is Auto Routing Between Models. In Homework
+            01, the user had to manually type the model name, which was
+            inconvenient and error-prone. In v2, the input is replaced with a
+            dropdown menu containing <code>Auto</code>,
+            <code>Gemini 2.0 Flash</code>, <code>Gemini 2.5 Flash</code>, and
+            <code>Gemini 2.5 Pro</code>. When <code>Auto</code> is selected,
+            the server analyzes the complexity and length of the message and
+            then chooses the most suitable model. General conversation is
+            usually routed to <code>Gemini 2.5 Flash</code> for balanced speed
+            and quality, while complex reasoning, coding, or long-form tasks
+            are routed to <code>Gemini 2.5 Pro</code> for stronger capability.
+            If a preferred model is temporarily unavailable, the fallback logic
+            can retry with other available models, including
+            <code>Gemini 2.0 Flash</code>. Each response also shows badges
+            indicating which model was used and whether the result came from
+            auto routing.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Tool Use / MCP-style Tool Calling</h3>
+          <p>
+            The fourth improvement is Tool Use / MCP-style Tool Calling. The
+            original chatbot could only generate plain text and could not
+            perform any actions. In v2, five Gemini function calling tools are
+            defined on the server: <code>get_current_datetime</code>,
+            <code>calculate</code>, <code>save_memory</code>,
+            <code>recall_memories</code>, and <code>web_search</code>. These
+            tools allow the AI to retrieve time information, perform safe
+            arithmetic calculations, save user memory, search existing memories,
+            and simulate web search results. A function-calling loop is
+            implemented so that the model can call multiple tools continuously,
+            up to five rounds, before generating the final response. The
+            frontend also provides a switch for enabling or disabling tool use,
+            and the response area displays which tools were used for that
+            answer.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Other Useful Functions</h3>
+          <p>
+            The final part of the upgrade is Other Useful Functions. The
+            chatbot now supports Markdown rendering using <code>marked.js</code>,
+            so responses can display code blocks, tables, headings, lists, and
+            blockquotes properly. An <code>Export</code> button is added so the
+            entire conversation can be downloaded as a Markdown file. Each
+            response also shows the API response time, helping users understand
+            system performance. The interface also includes a
+            <strong>Conversation Time Capsule</strong> feature for saving and
+            restoring local chat snapshots. In addition, an extra practical
+            feature called <strong>One-click Summary</strong> is added, which
+            can summarize the conversation into goal, key points, decisions,
+            open questions, and next steps.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>File Changes</h3>
+          <p>
+            In terms of implementation, the main runtime changes are
+            concentrated in four core files. <code>server.js</code> is extended
+            with the memory system, multimodal support, auto-routing logic,
+            tool definitions, execution loop, and new API endpoints.
+            <code>public/index.html</code> is updated with image upload UI,
+            memory management panel, model dropdown, tool toggle, Markdown
+            styling, and export controls. <code>public/app.js</code> now
+            handles image processing, memory management, Markdown rendering,
+            export logic, and drag-and-drop or paste support. Finally,
+            <code>.gitignore</code> is updated to exclude the
+            <code>data/</code> directory and generated report/media outputs so
+            temporary or deliverable files are not committed to Git.
+          </p>
+        </section>
+
+        <section class="card">
+          <h3>Conclusion</h3>
+          <p>
+            Overall, My Gemini Chat Web v2 transforms the original homework
+            into a more complete and extensible AI chatbot
+            system. It demonstrates not only frontend and backend integration,
+            but also practical AI system design including memory management,
+            multimodal input, automatic model routing, function calling, and
+            conversation summarization.
+          </p>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <div>Student ID: 112550044 | Name: 吳宇藤</div>
+        <div>Generative AI Homework 01 v2</div>
+      </footer>
+    </main>
+  </body>
+</html>

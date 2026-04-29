@@ -1,12 +1,20 @@
 {
   "name": "my-chatgpt-web",
-  "version": "1.0.0",
-  "description": "Personal ChatGPT-style web app using Gemini API",
+  "version": "2.0.0",
+  "description": "V2 Gemini chatbot with memory, multimodal input, auto routing, tool use, and summary features",
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "prestart": "node scripts/check-node.cjs",
+    "predev": "node scripts/check-node.cjs",
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "diagram:svg": "mmdc -p puppeteer-config.json -c mermaid.config.json -i system-architecture.mmd -o system-architecture.svg -b transparent",
+    "diagram:png": "mmdc -p puppeteer-config.json -c mermaid.config.json -i system-architecture.mmd -o system-architecture.png -b white -w 2200",
+    "diagram:render": "npm run diagram:svg && npm run diagram:png"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [
     "gemini",
@@ -20,5 +28,8 @@
     "@google/genai": "^1.46.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.12.0"
   }
 }

@@ -1,3 +1,13 @@
 node_modules/
 .env
 .DS_Store
+data/
+
+# Generated diagram / report outputs
+system-architecture.svg
+system-architecture.png
+system-architecture.pdf
+system-introduction.pdf
+system-introduction.docx
+StudentId.pdf
+StudentId.mp4

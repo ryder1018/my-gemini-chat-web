@@ -1,0 +1,96 @@
+flowchart LR
+    %% System Architecture of My Gemini Chat Web v2
+    U([User])
+
+    subgraph FE["Frontend (Browser)"]
+        direction TB
+        Intro["Landing / Intro Page"]
+        UI["Chat Interface<br/>public/index.html + public/app.js"]
+        Controls["Interaction Controls<br/>Model Selector<br/>Tool Toggle<br/>Memory Panel<br/>Prompt DNA<br/>One-click Summary"]
+        Input["User Input<br/>Text + Image Upload<br/>Click / Drag-drop / Paste"]
+        Extras["Other Useful Functions<br/>Markdown Rendering<br/>Export Chat (.md)<br/>Response Time Badge<br/>Conversation Time Capsule"]
+        Local["Browser localStorage<br/>Snapshots + Settings"]
+
+        Intro --> UI
+        Controls --> UI
+        Input --> UI
+        Extras --> UI
+        UI <--> Local
+    end
+
+    subgraph BE["Backend (Node.js + Express / server.js)"]
+        direction TB
+        MemoriesAPI["GET / POST / DELETE<br/>/api/memories"]
+        ChatAPI["POST /api/chat"]
+        SummaryAPI["POST /api/summary"]
+        MemorySvc["Long-term Memory Manager<br/>Inject memories into system prompt"]
+        Router["Auto Model Router<br/>General requests -> 2.5 Flash<br/>Complex reasoning / coding -> 2.5 Pro"]
+        ToolLoop["Tool Calling Loop<br/>Gemini Function Calling<br/>max 5 rounds"]
+        SummarySvc["Summary Generator"]
+        Fallback["Retry + Fallback Handler"]
+    end
+
+    subgraph TOOLS["Tool Providers (MCP-style)"]
+        direction TB
+        TimeTool["get_current_datetime"]
+        CalcTool["calculate"]
+        SaveTool["save_memory"]
+        RecallTool["recall_memories"]
+        SearchTool["web_search<br/>(mock, replaceable with real API)"]
+    end
+
+    subgraph STORAGE["Persistent Storage (Server-side File)"]
+        direction TB
+        MemoryFile[("data/memories.json")]
+    end
+
+    subgraph AI["External AI Service"]
+        direction TB
+        Gateway["Google Gemini API"]
+        M20["Gemini 2.0 Flash"]
+        M25F["Gemini 2.5 Flash"]
+        M25P["Gemini 2.5 Pro"]
+
+        Gateway --> M20
+        Gateway --> M25F
+        Gateway --> M25P
+    end
+
+    U -->|chat, image upload, memory operations| UI
+    UI -->|save / load / delete memory| MemoriesAPI
+    Input -->|message, history, imageData| ChatAPI
+    UI -->|summary request| SummaryAPI
+
+    MemoriesAPI <--> MemorySvc
+    ChatAPI --> Router
+    ChatAPI --> MemorySvc
+    MemorySvc --> ToolLoop
+    Router --> ToolLoop
+    ToolLoop --> Fallback
+    SummaryAPI --> SummarySvc
+    SummarySvc --> Router
+    Fallback --> Gateway
+
+    ToolLoop --> TimeTool
+    ToolLoop --> CalcTool
+    ToolLoop --> SaveTool
+    ToolLoop --> RecallTool
+    ToolLoop --> SearchTool
+
+    SaveTool --> MemorySvc
+    RecallTool --> MemorySvc
+    MemorySvc <--> MemoryFile
+
+    classDef actor fill:#DFF2FF,stroke:#2E5E96,stroke-width:2px,color:#10243E;
+    classDef frontend fill:#F6FBFF,stroke:#3F6F9F,stroke-width:1.6px,color:#10243E;
+    classDef backend fill:#EEF5FF,stroke:#2E5E96,stroke-width:1.8px,color:#10243E;
+    classDef tools fill:#FFF7EA,stroke:#B7832F,stroke-width:1.5px,color:#4A3717;
+    classDef storage fill:#F4F8FC,stroke:#607C9A,stroke-width:1.5px,color:#22384F;
+    classDef external fill:#ECFFF7,stroke:#2E8B6B,stroke-width:1.6px,color:#173A2D;
+
+    class U actor;
+    class Intro,UI,Controls,Input,Extras,Local frontend;
+    class Health,Models,MemoriesAPI,ChatAPI,SummaryAPI,MemorySvc,Router,ToolLoop,SummarySvc,Fallback backend;
+    class TimeTool,CalcTool,SaveTool,RecallTool,SearchTool tools;
+    class MemoryFile storage;
+    class Gateway,M20,M25F,M25P external;
